@@ -1,0 +1,8 @@
+Unity_RTSP/* filter=lfs diff=lfs merge=lfs -text
+Unity_RTSP/.gitignore !text !filter !merge !diff
+Unity_RTSP/Unity_RTSP.slnx !text !filter !merge !diff
+Unity_RTSP/Assets/Plugins/x86_64/gstreamer-1.0/lib/gstreamer-1.0/libgstaws.dll filter=lfs diff=lfs merge=lfs -text
+Unity_RTSP/Assets/Plugins/x86_64/gstreamer-1.0/lib/gstreamer-1.0/libgstaws.a filter=lfs diff=lfs merge=lfs -text
+Unity_RTSP/Assets/Plugins/x86_64/gstreamer-1.0/lib/gstreamer-1.0/libgstrswebrtc.a filter=lfs diff=lfs merge=lfs -text
+Unity_RTSP/Assets/Plugins/x86_64/gstreamer-1.0/lib/gstreamer-1.0/libgstrswebrtc.dll filter=lfs diff=lfs merge=lfs -text
+Unity_RTSP/Assets/Plugins/x86_64/gstreamer-1.0/bin/librsvg-2-2.dll filter=lfs diff=lfs merge=lfs -text
