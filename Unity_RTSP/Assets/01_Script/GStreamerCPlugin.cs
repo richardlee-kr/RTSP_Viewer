@@ -8,7 +8,7 @@ public class GStreamerCPlugin : MonoBehaviour
 {
      // ===== Native DLL =====
     [DllImport("gst_native", CallingConvention = CallingConvention.Cdecl)]
-    private static extern IntPtr InitPipelineWithSize(int width, int height);
+    private static extern IntPtr InitPipelineWithSize(string url, int width, int height);
 
     [DllImport("gst_native", CallingConvention = CallingConvention.Cdecl)]
     private static extern IntPtr GetFrame(ref int width, ref int height);
@@ -21,6 +21,9 @@ public class GStreamerCPlugin : MonoBehaviour
 
     // ===== Unity =====
     public RawImage targetRawImage;
+
+    [Header("RTSP streaming address")]
+    public string rtsp_url;
 
     private Texture2D videoTexture;
     private int texWidth = 0;
@@ -85,7 +88,7 @@ public class GStreamerCPlugin : MonoBehaviour
         Debug.Log($"[GStreamer] Target size = {width} x {height}");
 
         // ===== 4. Native pipeline 초기화 =====
-        IntPtr msgPtr = InitPipelineWithSize(width, height);
+        IntPtr msgPtr = InitPipelineWithSize(rtsp_url, width, height);
         string msg = Marshal.PtrToStringAnsi(msgPtr);
 
         Debug.Log("[GStreamer] " + msg);

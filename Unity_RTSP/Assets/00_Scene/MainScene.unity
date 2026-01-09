@@ -658,6 +658,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetRawImage: {fileID: 265690549}
+  rtsp_url: 192.168.1.45:8554/vlc
 --- !u!1 &1197820378
 GameObject:
   m_ObjectHideFlags: 0
