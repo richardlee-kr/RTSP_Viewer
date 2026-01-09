@@ -1,41 +1,82 @@
 using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GStreamerCPlugin : MonoBehaviour
 {
-    [DllImport("gst_native")]
-    static extern IntPtr InitPipeline();
+     // ===== Native DLL =====
+    [DllImport("gst_native", CallingConvention = CallingConvention.Cdecl)]
+    private static extern IntPtr InitPipelineWithSize(int width, int height);
 
-    [DllImport("gst_native")]
-    static extern IntPtr GetFrame(ref int w, ref int h);
+    [DllImport("gst_native", CallingConvention = CallingConvention.Cdecl)]
+    private static extern IntPtr GetFrame(ref int width, ref int height);
 
-    [DllImport("gst_native")]
-    static extern void ReleaseFrame();
+    [DllImport("gst_native", CallingConvention = CallingConvention.Cdecl)]
+    private static extern void ReleaseFrame();
 
-    Texture2D tex;
+    [DllImport("gst_native", CallingConvention = CallingConvention.Cdecl)]
+    private static extern void StopPipeline();
+
+    // ===== Unity =====
+    public RawImage targetRawImage;
+
+    private Texture2D videoTexture;
+    private int texWidth = 0;
+    private int texHeight = 0;
 
     void Start()
     {
-        var result = InitPipeline();
-        Debug.Log(Marshal.PtrToStringAnsi(result));
+        // RawImage 실제 픽셀 크기 계산
+        RectTransform rt = targetRawImage.rectTransform;
+        Vector2 size = rt.rect.size;
+        float scale = rt.lossyScale.x;
+
+        int width = Mathf.RoundToInt(size.x * scale);
+        int height = Mathf.RoundToInt(size.y * scale);
+
+        IntPtr msgPtr = InitPipelineWithSize(width, height);
+        string msg = Marshal.PtrToStringAnsi(msgPtr);
+
+        Debug.Log($"[GStreamer] {msg} ({width}x{height})");
     }
 
     void Update()
     {
         int w = 0, h = 0;
-        IntPtr ptr = GetFrame(ref w, ref h);
+        IntPtr dataPtr = GetFrame(ref w, ref h);
 
-        if (ptr != IntPtr.Zero)
+        if (dataPtr == IntPtr.Zero || w == 0 || h == 0)
+            return;
+
+        // Texture 생성 (최초 1회)
+        if (videoTexture == null)
         {
-            if (tex == null)
-                tex = new Texture2D(w, h, TextureFormat.RGBA32, false);
+            texWidth = w;
+            texHeight = h;
 
-            tex.LoadRawTextureData(ptr, w * h * 4);
-            tex.Apply();
+            videoTexture = new Texture2D(
+                texWidth,
+                texHeight,
+                TextureFormat.RGBA32,
+                false
+            );
 
-            GetComponent<Renderer>().material.mainTexture = tex;
-            ReleaseFrame();
+            videoTexture.wrapMode = TextureWrapMode.Clamp;
+            videoTexture.filterMode = FilterMode.Bilinear;
+
+            targetRawImage.texture = videoTexture;
         }
+
+        // Native → Unity 복사
+        videoTexture.LoadRawTextureData(dataPtr, texWidth * texHeight * 4);
+        videoTexture.Apply(false);
+
+        ReleaseFrame();
+    }
+
+    void OnDestroy()
+    {
+        StopPipeline();
     }
 }

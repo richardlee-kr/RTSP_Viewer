@@ -9,12 +9,13 @@ static GstMapInfo current_map;
 
 static char error_buffer[1024];
 
-static gchar* pipelineStr = "videotestsrc ! videoconvert ! appsink name=mysink";
+//static gchar* pipelineStr = "videotestsrc ! videoconvert ! appsink name=mysink";
 //static gchar* pipelinStr = "rtspsrc location=rtsp://127.0.0.1:8554/vlc latency=200 " "! decodebin " "! videoconvert ! video/x-raw,format=RGBA " "! appsink name=mysink sync=false max-buffers=1 drop=true";
 
 __declspec(dllexport)
-const char* InitPipeline(void)
+const char* InitPipelineWithSize(int width, int height)
 {
+    /*
     g_setenv(
         "GST_PLUGIN_PATH",
         "C:/Unity_git/RTSP/Unity_RTSP/Assets/Plugins/x86_64/gstreamer-1.0/lib/gstreamer-1.0",
@@ -26,8 +27,24 @@ const char* InitPipeline(void)
         "C:/Unity_git/RTSP/Unity_RTSP/Assets/Plugins/x86_64/gstreamer-1.0/bin",
         TRUE
     );
+    */
 
     gst_init(NULL, NULL);
+
+    char pipelineStr[512];
+
+    snprintf(
+        pipelineStr,
+        sizeof(pipelineStr),
+        "videotestsrc "
+        "! videoconvert "
+        "! videoscale "
+        "! videoflip method=vertical-flip "
+        "! video/x-raw,width=%d,height=%d,format=RGBA "
+        "! appsink name=mysink sync=false max-buffers=1 drop=true",
+        width,
+        height
+    );
 
     GError* error = NULL;
 
