@@ -65,15 +65,15 @@ public class RTSP_Receiver : MonoBehaviour
 
         Debug.Log($"[GStreamer] Target size = {width} x {height}");
 
-        // ===== 4. Native pipeline 초기화 =====
+        // ===== pipeline 초기화 =====
         IntPtr msgPtr = InitPipelineWithSize(url, width, height);
         string msg = Marshal.PtrToStringAnsi(msgPtr);
 
         Debug.Log("[GStreamer] " + msg);
     }
-    private void ReconnectRTSP()
+    public void ReconnectRTSP()
     {
-        ChangeRTSPAddress(rtsp_url);
+        StartCoroutine(ReconnectCoroutine());
     }
     public void ChangeRTSPAddress(string url)
     {
@@ -120,7 +120,7 @@ public class RTSP_Receiver : MonoBehaviour
             if (Time.time - lastFrameTime > timeout)
             {
                 Debug.Log($"[GStreamer] No frames for {timeout}s, restarting pipeline...");
-                ChangeRTSPAddress(rtsp_url);
+                ReconnectRTSP();
                 lastFrameTime = Time.time;
             }
         }
@@ -132,13 +132,13 @@ public class RTSP_Receiver : MonoBehaviour
         return $"{rtsp_address}:{rtsp_port}/{rtsp_path.TrimStart('/')}";
     }
     
-    public IEnumerator ReconnectCoroutine()
+    private IEnumerator ReconnectCoroutine()
     {
         isReconnecting = true;
 
         StopPipeline();
         yield return null;
-        ReconnectRTSP();
+        StartPipeline(rtsp_url);
 
         isReconnecting = false;
     }
