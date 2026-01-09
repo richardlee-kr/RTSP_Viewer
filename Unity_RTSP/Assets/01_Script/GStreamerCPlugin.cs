@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
@@ -25,20 +26,69 @@ public class GStreamerCPlugin : MonoBehaviour
     private int texWidth = 0;
     private int texHeight = 0;
 
+    static bool envInitialized = false;
+
+    void Awake()
+    {
+        if(envInitialized)
+            return;
+
+        // ===== 1. GStreamer plugin 경로 설정 (상대경로) =====
+        /*
+        #if UNITY_EDITOR
+            string pluginPath = Path.Combine(Application.dataPath, "Plugins/x86_64/gstreamer-1.0");
+        #else
+            string pluginPath = Path.Combine(Application.dataPath, "Plugins/x86_64");
+        #endif
+
+        string pluginPath = Path.Combine(Application.dataPath, "Plugins/x86_64/gstreamer-1.0");
+        Environment.SetEnvironmentVariable(
+            "GST_PLUGIN_PATH",
+            pluginPath
+        );
+        */
+
+        /*
+        // ===== 2. GStreamer DLL (bin) 경로 PATH에 추가 =====
+        string binPath = System.IO.Path.Combine(
+            Application.dataPath,
+            "Plugins/x86_64"
+        );
+
+        string currentPath = Environment.GetEnvironmentVariable("PATH");
+        if (!currentPath.Contains(binPath))
+        {
+            Environment.SetEnvironmentVariable(
+                "PATH",
+                binPath + ";" + currentPath
+            );
+        }
+        */
+
+        envInitialized = true;
+
+        //Debug.Log("[GStreamer] GST_PLUGIN_PATH = " + pluginPath);
+        //Debug.Log("[GStreamer] PATH += " + binPath);
+    }
+
     void Start()
     {
-        // RawImage 실제 픽셀 크기 계산
+        // ===== 3. RawImage 실제 픽셀 크기 계산 =====
         RectTransform rt = targetRawImage.rectTransform;
+
         Vector2 size = rt.rect.size;
         float scale = rt.lossyScale.x;
 
         int width = Mathf.RoundToInt(size.x * scale);
         int height = Mathf.RoundToInt(size.y * scale);
 
+        Debug.Log($"[GStreamer] Target size = {width} x {height}");
+
+        // ===== 4. Native pipeline 초기화 =====
         IntPtr msgPtr = InitPipelineWithSize(width, height);
         string msg = Marshal.PtrToStringAnsi(msgPtr);
 
-        Debug.Log($"[GStreamer] {msg} ({width}x{height})");
+        Debug.Log("[GStreamer] " + msg);
     }
 
     void Update()
