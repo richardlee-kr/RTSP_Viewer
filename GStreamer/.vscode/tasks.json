@@ -9,29 +9,59 @@
                 "-std=c11",
                 "-g",
                 "${file}",
-
                 "-IC:\\gstreamer\\1.0\\mingw_x86_64\\include",
                 "-IC:\\gstreamer\\1.0\\mingw_x86_64\\include\\gstreamer-1.0",
                 "-IC:\\gstreamer\\1.0\\mingw_x86_64\\include\\glib-2.0",
                 "-IC:\\gstreamer\\1.0\\mingw_x86_64\\lib\\glib-2.0\\include",
-
                 "-LC:\\gstreamer\\1.0\\mingw_x86_64\\lib",
-
                 "-lgstreamer-1.0",
                 "-lgobject-2.0",
                 "-lglib-2.0",
-
+                "-lgstreamer-rtsp-server-1.0",
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe"
             ],
-            "problemMatcher": ["$gcc"],
+            "problemMatcher": [
+                "$gcc"
+            ],
             "group": {
                 "kind": "build",
-                "isDefault": true
+                "isDefault": false
             },
             "options": {
                 "cwd": "${fileDirname}"
             }
+        },
+        {
+        "label": "dll build (C)",
+        "type": "process",
+        "command": "C:\\mingw64\\bin\\gcc.exe",
+        "args": [
+            "-shared",
+            "-o",
+            "${fileDirname}\\${fileBasenameNoExtension}.dll",
+            "${file}",
+            //"-IC:\\gstreamer\\1.0\\mingw_x86_64\\include",
+            "-IC:\\gstreamer\\1.0\\mingw_x86_64\\include\\gstreamer-1.0",
+            "-IC:\\gstreamer\\1.0\\mingw_x86_64\\include\\glib-2.0",
+            "-IC:\\gstreamer\\1.0\\mingw_x86_64\\lib\\glib-2.0\\include",
+            "-LC:\\gstreamer\\1.0\\mingw_x86_64\\lib",
+            "-lgstreamer-1.0",
+            "-lgstapp-1.0",
+            "-lgobject-2.0",
+            "-lglib-2.0",
+            //"-lgstreamer-rtsp-server-1.0",
+        ],
+        "problemMatcher": [
+            "$gcc"
+        ],
+        "group": {
+            "kind": "build",
+            "isDefault": false
+        },
+        "options": {
+            "cwd": "${fileDirname}"
         }
+    }
     ]
 }
