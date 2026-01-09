@@ -9,6 +9,10 @@ static GstMapInfo current_map;
 
 static char error_buffer[1024];
 
+char* IP_ADDRESS = "192.168.1.45";
+char* PORT = "8554";
+char* STREAMING_PATH = "vlc";
+
 //static gchar* pipelineStr = "videotestsrc ! videoconvert ! appsink name=mysink";
 //static gchar* pipelinStr = "rtspsrc location=rtsp://127.0.0.1:8554/vlc latency=200 " "! decodebin " "! videoconvert ! video/x-raw,format=RGBA " "! appsink name=mysink sync=false max-buffers=1 drop=true";
 
@@ -36,12 +40,16 @@ const char* InitPipelineWithSize(int width, int height)
     snprintf(
         pipelineStr,
         sizeof(pipelineStr),
-        "videotestsrc "
+        "rtspsrc location=rtsp://%s:%s/%s latency=200 "
+        "! decodebin "
         "! videoconvert "
         "! videoscale "
         "! videoflip method=vertical-flip "
         "! video/x-raw,width=%d,height=%d,format=RGBA "
         "! appsink name=mysink sync=false max-buffers=1 drop=true",
+        IP_ADDRESS,
+        PORT,
+        STREAMING_PATH,
         width,
         height
     );
