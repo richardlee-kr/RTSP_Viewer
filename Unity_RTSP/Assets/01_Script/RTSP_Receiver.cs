@@ -32,10 +32,10 @@ public class RTSP_Receiver : MonoBehaviour
     private string rtsp_url;
     [SerializeField] private int targetFPS;
     private float frameInterval;
-    private float lastUpdate;
+    private float renderTimer;
 
     private bool isReconnecting = false;
-    private float lastFrameTime = 0f;
+    private float reconnectTimer = 0f;
     private float timeout = 1f;
 
     private Texture2D videoTexture;
@@ -50,7 +50,19 @@ public class RTSP_Receiver : MonoBehaviour
 
     void Update()
     {
-        UpdateTexture();
+        renderTimer += Time.deltaTime;
+        reconnectTimer += Time.deltaTime;
+
+        if(renderTimer >= frameInterval)
+        {
+            renderTimer = 0f;
+            UpdateTexture();
+        }
+
+        if(reconnectTimer >= timeout)
+        {
+            ReconnectRTSP();
+        }
     }
 
     public void StartPipeline()
@@ -76,6 +88,12 @@ public class RTSP_Receiver : MonoBehaviour
     }
     public void ReconnectRTSP()
     {
+        if(isReconnecting)
+        {
+            return;
+        }
+        
+        isReconnecting = true;
         StartCoroutine(ReconnectCoroutine());
     }
     public void ChangeRTSPAddress(string url)
@@ -89,52 +107,35 @@ public class RTSP_Receiver : MonoBehaviour
         int w = 0, h = 0;
         IntPtr dataPtr = GetFrame(ctx, ref w, ref h);
 
-        if(dataPtr != IntPtr.Zero || w > 0 || h > 0)
+        if(dataPtr == IntPtr.Zero || w <+ 0 || h <= 0)
         {
-            lastFrameTime = Time.time;
-
-            // Texture 생성 (최초 1회)
-            if (videoTexture == null)
-            {
-                texWidth = w;
-                texHeight = h;
-
-                videoTexture = new Texture2D(
-                    texWidth,
-                    texHeight,
-                    TextureFormat.BGRA32,
-                    false
-                );
-
-                videoTexture.wrapMode = TextureWrapMode.Clamp;
-                videoTexture.filterMode = FilterMode.Bilinear;
-
-                targetRawImage.texture = videoTexture;
-            }
-
-            if(Time.time - lastUpdate < frameInterval)
-            {
-                ReleaseFrame(ctx);
-                return;
-            }
-
-            // Native → Unity 복사
-            videoTexture.LoadRawTextureData(dataPtr, texWidth * texHeight * 4);
-            videoTexture.Apply(false, false);
-
-            ReleaseFrame(ctx);
-            lastUpdate = Time.time;
-        }
-        else
-        {
-            if (Time.time - lastFrameTime > timeout)
-            {
-                Debug.Log($"[GStreamer] No frames for {timeout}s, restarting pipeline...");
-                ReconnectRTSP();
-                lastFrameTime = Time.time;
-            }
+            return;
         }
 
+        reconnectTimer = 0f;
+
+        if (videoTexture == null)
+        {
+            texWidth = w;
+            texHeight = h;
+
+            videoTexture = new Texture2D(
+                texWidth,
+                texHeight,
+                TextureFormat.BGRA32,
+                false
+            );
+
+            videoTexture.wrapMode = TextureWrapMode.Clamp;
+            videoTexture.filterMode = FilterMode.Bilinear;
+
+            targetRawImage.texture = videoTexture;
+        }
+
+        videoTexture.LoadRawTextureData(dataPtr, texWidth * texHeight * 4);
+        videoTexture.Apply(false, false);
+
+        ReleaseFrame(ctx);
     }
 
     private void SafeDestroyPipeline()
@@ -153,11 +154,12 @@ public class RTSP_Receiver : MonoBehaviour
     
     private IEnumerator ReconnectCoroutine()
     {
-        isReconnecting = true;
-
         SafeDestroyPipeline();
         yield return null;
         StartPipeline(rtsp_url);
+
+        reconnectTimer = 0f;
+        renderTimer = 0f;
 
         isReconnecting = false;
     }
