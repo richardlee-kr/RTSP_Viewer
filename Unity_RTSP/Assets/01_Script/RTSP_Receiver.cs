@@ -9,16 +9,18 @@ public class RTSP_Receiver : MonoBehaviour
 {
      // ===== Native DLL =====
     [DllImport("gst_native", CallingConvention = CallingConvention.Cdecl)]
-    private static extern IntPtr InitPipelineWithSize(string url, int width, int height);
+    private static extern IntPtr CreatePipeline(string url, int width, int height);
 
     [DllImport("gst_native", CallingConvention = CallingConvention.Cdecl)]
-    private static extern IntPtr GetFrame(ref int width, ref int height);
+    private static extern IntPtr GetFrame(IntPtr ctx, ref int width, ref int height);
 
     [DllImport("gst_native", CallingConvention = CallingConvention.Cdecl)]
-    private static extern void ReleaseFrame();
+    private static extern void ReleaseFrame(IntPtr ctx);
 
     [DllImport("gst_native", CallingConvention = CallingConvention.Cdecl)]
-    private static extern void StopPipeline();
+    private static extern void DestroyPipeline(IntPtr ctx);
+
+    IntPtr ctx;
 
     // ===== Unity =====
     public RawImage targetRawImage;
@@ -66,10 +68,7 @@ public class RTSP_Receiver : MonoBehaviour
         Debug.Log($"[GStreamer] Target size = {width} x {height}");
 
         // ===== pipeline 초기화 =====
-        IntPtr msgPtr = InitPipelineWithSize(url, width, height);
-        string msg = Marshal.PtrToStringAnsi(msgPtr);
-
-        Debug.Log("[GStreamer] " + msg);
+        ctx = CreatePipeline(url, width, height);
     }
     public void ReconnectRTSP()
     {
@@ -77,14 +76,14 @@ public class RTSP_Receiver : MonoBehaviour
     }
     public void ChangeRTSPAddress(string url)
     {
-        StopPipeline();
+        DestroyPipeline(ctx);
         StartPipeline(url);
     }
 
     private void UpdateTexture()
     {
         int w = 0, h = 0;
-        IntPtr dataPtr = GetFrame(ref w, ref h);
+        IntPtr dataPtr = GetFrame(ctx, ref w, ref h);
 
         if(dataPtr != IntPtr.Zero || w > 0 || h > 0)
         {
@@ -113,7 +112,7 @@ public class RTSP_Receiver : MonoBehaviour
             videoTexture.LoadRawTextureData(dataPtr, texWidth * texHeight * 4);
             videoTexture.Apply(false);
 
-            ReleaseFrame();
+            ReleaseFrame(ctx);
         }
         else
         {
@@ -136,7 +135,7 @@ public class RTSP_Receiver : MonoBehaviour
     {
         isReconnecting = true;
 
-        StopPipeline();
+        DestroyPipeline(ctx);
         yield return null;
         StartPipeline(rtsp_url);
 
@@ -145,6 +144,6 @@ public class RTSP_Receiver : MonoBehaviour
 
     void OnDestroy()
     {
-        StopPipeline();
+        DestroyPipeline(ctx);
     }
 }
