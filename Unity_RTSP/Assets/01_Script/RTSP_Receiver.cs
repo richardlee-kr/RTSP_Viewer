@@ -107,7 +107,7 @@ public class RTSP_Receiver : MonoBehaviour
         int w = 0, h = 0;
         IntPtr dataPtr = GetFrame(ctx, ref w, ref h);
 
-        if(dataPtr == IntPtr.Zero || w <+ 0 || h <= 0)
+        if(dataPtr == IntPtr.Zero || w <= 0 || h <= 0)
         {
             return;
         }

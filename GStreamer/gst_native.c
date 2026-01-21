@@ -61,7 +61,6 @@ MyGstContext* CreatePipeline(const char* rtspurl, int width, int height)
     );
 
     GError* error = NULL;
-
     MyGstContext* ctx = (MyGstContext*)calloc(1, sizeof(MyGstContext));
 
     ctx->pipeline = gst_parse_launch(pipelineStr, &error);
@@ -97,17 +96,20 @@ unsigned char* GetFrame(MyGstContext* ctx, int* width, int* height)
     if (!ctx->sample)
         return NULL;
 
+    GstBuffer* buffer = gst_sample_get_buffer(ctx->sample);
+
     GstCaps* caps = gst_sample_get_caps(ctx->sample);
     GstStructure* s = gst_caps_get_structure(caps, 0);
 
     gst_structure_get_int(s, "width", width);
     gst_structure_get_int(s, "height", height);
 
-    GstBuffer* buffer = gst_sample_get_buffer(ctx->sample);
-
     if (!gst_buffer_map(buffer, &ctx->map, GST_MAP_READ))
+    {
+        gst_sample_unref(ctx->sample);
+        ctx->sample = NULL;
         return NULL;
-
+    }
     return ctx->map.data; // RGBA raw pointer
 }
 
@@ -130,8 +132,18 @@ void DestroyPipeline(MyGstContext* ctx)
     if (!ctx)
         return;
 
-    gst_element_set_state(ctx->pipeline, GST_STATE_NULL);
-    gst_object_unref(ctx->pipeline);
+    if (ctx->appsink)
+    {
+        gst_object_unref(ctx->appsink);
+        ctx->appsink = NULL;
+    }
+
+    if (ctx->pipeline)
+    {
+        gst_element_set_state(ctx->pipeline, GST_STATE_NULL);
+        gst_object_unref(ctx->pipeline);
+        ctx->pipeline = NULL;
+    }
     
     free(ctx);
 }
