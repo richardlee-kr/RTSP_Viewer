@@ -12,6 +12,8 @@ typedef struct
 
 static char error_buffer[1024];
 
+static int gst_initialized = 0;
+
 //char* IP_ADDRESS = "192.168.1.45";
 //char* PORT = "8554";
 //char* STREAMING_PATH = "vlc";
@@ -36,7 +38,11 @@ MyGstContext* CreatePipeline(const char* rtspurl, int width, int height)
     );
     */
 
-    gst_init(NULL, NULL);
+    if(!gst_initialized)
+    {
+        gst_init(NULL, NULL);
+        gst_initialized = 1;
+    }
 
     char pipelineStr[512];
 
@@ -47,9 +53,8 @@ MyGstContext* CreatePipeline(const char* rtspurl, int width, int height)
         "! decodebin "
         "! videoconvert "
         "! videoscale "
-        "! videoflip method=vertical-flip "
-        "! video/x-raw,width=%d,height=%d,format=RGBA "
-        "! appsink name=mysink sync=false max-buffers=1 drop=true",
+        "! video/x-raw,width=%d,height=%d,format=BGRA " //크기 설정, BGRA 포맷
+        "! appsink name=mysink sync=false max-buffers=1 drop=true", //최신 프레임만 유지해서 지연 누적 방지
         rtspurl,
         width,
         height
@@ -86,7 +91,7 @@ unsigned char* GetFrame(MyGstContext* ctx, int* width, int* height)
         return NULL;
 
     ctx->sample = gst_app_sink_try_pull_sample(
-        GST_APP_SINK(ctx->appsink), 0
+        GST_APP_SINK(ctx->appsink), GST_MSECOND * 5
     );
 
     if (!ctx->sample)

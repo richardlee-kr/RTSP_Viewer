@@ -25,11 +25,14 @@ public class RTSP_Receiver : MonoBehaviour
     // ===== Unity =====
     public RawImage targetRawImage;
 
-    [Header("RTSP streaming url")]
+    [Header("RTSP streaming Settings")]
     public string rtsp_address;
     public string rtsp_port;
     public string rtsp_path;
     private string rtsp_url;
+    [SerializeField] private int targetFPS;
+    private float frameInterval;
+    private float lastUpdate;
 
     private bool isReconnecting = false;
     private float lastFrameTime = 0f;
@@ -42,6 +45,7 @@ public class RTSP_Receiver : MonoBehaviour
     void Start()
     {
         StartPipeline();
+        Initialize();
     }
 
     void Update()
@@ -76,7 +80,7 @@ public class RTSP_Receiver : MonoBehaviour
     }
     public void ChangeRTSPAddress(string url)
     {
-        DestroyPipeline(ctx);
+        SafeDestroyPipeline();
         StartPipeline(url);
     }
 
@@ -98,7 +102,7 @@ public class RTSP_Receiver : MonoBehaviour
                 videoTexture = new Texture2D(
                     texWidth,
                     texHeight,
-                    TextureFormat.RGBA32,
+                    TextureFormat.BGRA32,
                     false
                 );
 
@@ -108,11 +112,18 @@ public class RTSP_Receiver : MonoBehaviour
                 targetRawImage.texture = videoTexture;
             }
 
+            if(Time.time - lastUpdate < frameInterval)
+            {
+                ReleaseFrame(ctx);
+                return;
+            }
+
             // Native → Unity 복사
             videoTexture.LoadRawTextureData(dataPtr, texWidth * texHeight * 4);
-            videoTexture.Apply(false);
+            videoTexture.Apply(false, false);
 
             ReleaseFrame(ctx);
+            lastUpdate = Time.time;
         }
         else
         {
@@ -126,6 +137,15 @@ public class RTSP_Receiver : MonoBehaviour
 
     }
 
+    private void SafeDestroyPipeline()
+    {
+        if(ctx != IntPtr.Zero)
+        {
+            DestroyPipeline(ctx);
+            ctx = IntPtr.Zero;
+        }
+    }
+
     private string CombineUrl()
     {
         return $"{rtsp_address}:{rtsp_port}/{rtsp_path.TrimStart('/')}";
@@ -135,15 +155,32 @@ public class RTSP_Receiver : MonoBehaviour
     {
         isReconnecting = true;
 
-        DestroyPipeline(ctx);
+        SafeDestroyPipeline();
         yield return null;
         StartPipeline(rtsp_url);
 
         isReconnecting = false;
     }
 
+    private void Initialize()
+    {
+        SetImageFlip();
+        SetFPS();
+    }
+
+    private void SetImageFlip()
+    {
+        //flip image
+        RawImage img = targetRawImage;
+        img.uvRect = new Rect(0, 1, 1, -1);
+    }
+    private void SetFPS()
+    {
+        frameInterval = 1f / targetFPS;
+    }
+
     void OnDestroy()
     {
-        DestroyPipeline(ctx);
+        SafeDestroyPipeline();
     }
 }
