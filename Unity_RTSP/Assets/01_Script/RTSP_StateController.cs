@@ -11,7 +11,7 @@ public class RTSP_StateController : MonoBehaviour
 
     public void SetUrlText(string url)
     {
-        urlText.text = url;
+        urlText.text = $"rtsp://{url}";
     }
     public void UpdateState(RTSP_State state)
     {
