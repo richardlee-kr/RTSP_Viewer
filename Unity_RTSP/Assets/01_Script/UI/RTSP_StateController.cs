@@ -8,7 +8,12 @@ public class RTSP_StateController : MonoBehaviour
 
     [SerializeField] private Image stateImage;
     [SerializeField] private TMP_Text urlText;
+    [SerializeField] private TMP_Text titleText;
 
+    public void SetTitleText(string newTitle)
+    {
+        titleText.text = newTitle;
+    }
     public void SetUrlText(string url)
     {
         urlText.text = $"rtsp://{url}";

@@ -26,14 +26,12 @@ public class RTSP_Player : MonoBehaviour
     private RawImage targetRawImage;
     IntPtr ctx;
 
-    [Header("RTSP streaming Settings")]
-    public string rtsp_address;
-    public string rtsp_port;
-    public string rtsp_path;
+    private RTSP_PlayerHolder holder;
+
+    [SerializeField] private RTSP_Setting setting;
     private string rtsp_url;
 
     //FPS timer
-    [SerializeField] private int targetFPS = 30;
     private float frameInterval;
     private float renderTimer;
 
@@ -52,8 +50,8 @@ public class RTSP_Player : MonoBehaviour
 
     void Start()
     {
-        Initialize();
-        StartPipeline();
+        //Initialize();
+        //StartPipeline();
     }
 
     void Update()
@@ -99,6 +97,13 @@ public class RTSP_Player : MonoBehaviour
     {
         SafeDestroyPipeline();
         StartPipeline(url);
+    }
+    public void Setup(RTSP_Setting newSetting, RTSP_PlayerHolder holder)
+    {
+        this.setting = newSetting;
+        this.holder = holder;
+        Initialize();
+        StartPipeline();
     }
 
     private void UpdateTexture()
@@ -152,7 +157,7 @@ public class RTSP_Player : MonoBehaviour
     //URL 조합
     private string CombineUrl()
     {
-        return $"{rtsp_address}:{rtsp_port}/{rtsp_path.TrimStart('/')}";
+        return $"{setting.ip}:{setting.port}/{setting.path.TrimStart('/')}";
     }
     
     private IEnumerator ReconnectCoroutine()
@@ -178,8 +183,6 @@ public class RTSP_Player : MonoBehaviour
     {
         controller = GetComponent<RTSP_StateController>();
     }
-
-
     private void SetImage()
     {
         if(targetRawImage == null)
@@ -200,7 +203,7 @@ public class RTSP_Player : MonoBehaviour
     }
     private void SetFPS()
     {
-        frameInterval = 1f / targetFPS;
+        frameInterval = 1f / setting.fps;
     }
 
     private void UpdateTimer()
@@ -222,8 +225,24 @@ public class RTSP_Player : MonoBehaviour
         }
     }
 
+    public void RemoveSelf()
+    {
+        holder.RemovePlayer();
+        Destroy(this.transform.parent.gameObject);
+    }
+
     void OnDestroy()
     {
         SafeDestroyPipeline();
     }
+}
+
+[Serializable]
+public class RTSP_Setting
+{
+    public string title;
+    public string ip;
+    public string port;
+    public string path;
+    public int fps;
 }

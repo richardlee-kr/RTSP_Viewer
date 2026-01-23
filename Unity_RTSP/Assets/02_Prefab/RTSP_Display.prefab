@@ -406,7 +406,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 9163096699055133189}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8083496925324090949}
+        m_TargetAssemblyTypeName: RTSP_Player, Assembly-CSharp
+        m_MethodName: RemoveSelf
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &4461843358056222212
 GameObject:
   m_ObjectHideFlags: 0
@@ -704,7 +716,7 @@ RectTransform:
   m_GameObject: {fileID: 8223586648436987454}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.9, y: 0.9, z: 0.9}
+  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 3634050653460897165}
@@ -761,10 +773,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29e623b39925216428a81e49ef2860a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rtsp_address: 192.168.1.45
-  rtsp_port: 9550
-  rtsp_path: /live
-  targetFPS: 30
+  setting:
+    title: Arion_SMET RGB Camera 00
+    ip: 192.168.1.45
+    port: 9550
+    path: /live
+    fps: 30
 --- !u!114 &4991791130961593234
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -779,6 +793,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stateImage: {fileID: 5575336303096504205}
   urlText: {fileID: 5653860541714936831}
+  titleText: {fileID: 1035173085394978742}
 --- !u!1 &8229158623304084299
 GameObject:
   m_ObjectHideFlags: 0
@@ -804,7 +819,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8229158623304084299}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -820,7 +835,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 480, y: 480}
+  m_SizeDelta: {x: 420, y: 420}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6579321199418208852
 CanvasRenderer:
