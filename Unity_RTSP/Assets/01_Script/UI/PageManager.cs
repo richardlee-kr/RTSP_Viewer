@@ -5,7 +5,14 @@ public class PageManager : MonoBehaviour
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private GameObject addDisplay;
 
+    private PanelManager panelManager;
+
     private int playerCount;
+
+    public void SetManager(PanelManager manager)
+    {
+        this.panelManager = manager;
+    }
 
     public void AddPlayer(RTSP_Setting setting)
     {
@@ -16,6 +23,7 @@ public class PageManager : MonoBehaviour
         if(playerCount == 6)
         {
             addDisplay.SetActive(false);
+            panelManager.AddNewPage();
         }
         else
         {
@@ -31,4 +39,10 @@ public class PageManager : MonoBehaviour
             addDisplay.SetActive(true);
         }
     }
+    public void RequestOpeningAddDisplayPopup()
+    {
+        panelManager.OpenAddDisplayPopup();
+    }
+
+    public int GetPlayerCount() => playerCount;
 }
