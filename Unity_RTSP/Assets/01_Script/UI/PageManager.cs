@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class RTSP_PlayerHolder : MonoBehaviour
+public class PageManager : MonoBehaviour
 {
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private GameObject addDisplay;

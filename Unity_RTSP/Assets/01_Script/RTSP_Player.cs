@@ -26,7 +26,7 @@ public class RTSP_Player : MonoBehaviour
     private RawImage targetRawImage;
     IntPtr ctx;
 
-    private RTSP_PlayerHolder holder;
+    private PageManager holder;
 
     [SerializeField] private RTSP_Setting setting;
     private string rtsp_url;
@@ -98,7 +98,7 @@ public class RTSP_Player : MonoBehaviour
         SafeDestroyPipeline();
         StartPipeline(url);
     }
-    public void Setup(RTSP_Setting newSetting, RTSP_PlayerHolder holder)
+    public void Setup(RTSP_Setting newSetting, PageManager holder)
     {
         this.setting = newSetting;
         this.holder = holder;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class PanelManager : MonoBehaviour
 {
-    [SerializeField] List<RTSP_PlayerHolder> playerHolder = new List<RTSP_PlayerHolder>();
+    [SerializeField] List<PageManager> pages = new List<PageManager>();
 
     private int currentPageNum = 0;
 
@@ -17,5 +17,5 @@ public class PanelManager : MonoBehaviour
         
     }
 
-    public RTSP_PlayerHolder GetCurrentPlayerHolder() => playerHolder[currentPageNum];
+    public PageManager GetCurrentPlayerHolder() => pages[currentPageNum];
 }
