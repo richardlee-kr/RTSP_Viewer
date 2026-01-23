@@ -5,7 +5,8 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RTSP_Receiver : MonoBehaviour
+[RequireComponent(typeof(RawImage), typeof(RTSP_StateController))]
+public class RTSP_Player : MonoBehaviour
 {
      // ===== Native DLL =====
     [DllImport("gst_native", CallingConvention = CallingConvention.Cdecl)]
@@ -20,49 +21,45 @@ public class RTSP_Receiver : MonoBehaviour
     [DllImport("gst_native", CallingConvention = CallingConvention.Cdecl)]
     private static extern void DestroyPipeline(IntPtr ctx);
 
-    IntPtr ctx;
 
     // ===== Unity =====
-    public RawImage targetRawImage;
+    private RawImage targetRawImage;
+    IntPtr ctx;
 
     [Header("RTSP streaming Settings")]
     public string rtsp_address;
     public string rtsp_port;
     public string rtsp_path;
     private string rtsp_url;
-    [SerializeField] private int targetFPS;
+
+    //FPS timer
+    [SerializeField] private int targetFPS = 30;
     private float frameInterval;
     private float renderTimer;
 
+    //재연결 timer
     private bool isReconnecting = false;
     private float reconnectTimer = 0f;
     private float timeout = 1f;
 
+    //Texture
     private Texture2D videoTexture;
     private int texWidth = 0;
     private int texHeight = 0;
 
+    //Component
+    private RTSP_StateController controller;
+
     void Start()
     {
-        StartPipeline();
         Initialize();
+        StartPipeline();
     }
 
     void Update()
     {
-        renderTimer += Time.deltaTime;
-        reconnectTimer += Time.deltaTime;
-
-        if(renderTimer >= frameInterval)
-        {
-            renderTimer = 0f;
-            UpdateTexture();
-        }
-
-        if(reconnectTimer >= timeout)
-        {
-            ReconnectRTSP();
-        }
+        UpdateTimer();
+        CheckTimer();
     }
 
     public void StartPipeline()
@@ -72,7 +69,7 @@ public class RTSP_Receiver : MonoBehaviour
     }
     public void StartPipeline(string url)
     {
-        // ===== RawImage 실제 픽셀 크기 계산 =====
+        //RawImage 실제 픽셀 계산
         RectTransform rt = targetRawImage.rectTransform;
 
         Vector2 size = rt.rect.size;
@@ -81,10 +78,11 @@ public class RTSP_Receiver : MonoBehaviour
         int width = Mathf.RoundToInt(size.x * scale);
         int height = Mathf.RoundToInt(size.y * scale);
 
-        Debug.Log($"[GStreamer] Target size = {width} x {height}");
+        Debug.Log($"Try to start RTSP pipeline.\n Target size = {width} x {height}");
 
-        // ===== pipeline 초기화 =====
+        //GStreamer pipeline 초기화
         ctx = CreatePipeline(url, width, height);
+        controller.SetUrlText(rtsp_url);
     }
     public void ReconnectRTSP()
     {
@@ -93,6 +91,7 @@ public class RTSP_Receiver : MonoBehaviour
             return;
         }
         
+        controller.UpdateState(RTSP_State.disconnected);
         isReconnecting = true;
         StartCoroutine(ReconnectCoroutine());
     }
@@ -114,6 +113,9 @@ public class RTSP_Receiver : MonoBehaviour
 
         reconnectTimer = 0f;
 
+        controller.UpdateState(RTSP_State.connected);
+
+        //videoTexture 생성 (최초 1회)
         if (videoTexture == null)
         {
             texWidth = w;
@@ -147,6 +149,7 @@ public class RTSP_Receiver : MonoBehaviour
         }
     }
 
+    //URL 조합
     private string CombineUrl()
     {
         return $"{rtsp_address}:{rtsp_port}/{rtsp_path.TrimStart('/')}";
@@ -166,12 +169,31 @@ public class RTSP_Receiver : MonoBehaviour
 
     private void Initialize()
     {
-        SetImageFlip();
+        SetRequireComponent();
+        SetImage();
         SetFPS();
     }
 
-    private void SetImageFlip()
+    private void SetRequireComponent()
     {
+        controller = GetComponent<RTSP_StateController>();
+    }
+
+
+    private void SetImage()
+    {
+        if(targetRawImage == null)
+        {
+            if(TryGetComponent<RawImage>(out RawImage image))
+            {
+                targetRawImage = image;
+            }
+            else
+            {
+                Debug.LogError($"No RawImage in {gameObject.name}");
+                return;
+            }
+        }
         //flip image
         RawImage img = targetRawImage;
         img.uvRect = new Rect(0, 1, 1, -1);
@@ -179,6 +201,25 @@ public class RTSP_Receiver : MonoBehaviour
     private void SetFPS()
     {
         frameInterval = 1f / targetFPS;
+    }
+
+    private void UpdateTimer()
+    {
+        renderTimer += Time.deltaTime;
+        reconnectTimer += Time.deltaTime;
+    }
+    private void CheckTimer()
+    {
+        if(renderTimer >= frameInterval)
+        {
+            renderTimer = 0f;
+            UpdateTexture();
+        }
+
+        if(reconnectTimer >= timeout)
+        {
+            ReconnectRTSP();
+        }
     }
 
     void OnDestroy()
