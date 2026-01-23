@@ -495,8 +495,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetRawImage: {fileID: 204922874}
   rtsp_address: 192.168.1.45
-  rtsp_port: 8554
-  rtsp_path: /vlc
+  rtsp_port: 9550
+  rtsp_path: /live
+  targetFPS: 30
 --- !u!4 &842695007
 Transform:
   m_ObjectHideFlags: 0
