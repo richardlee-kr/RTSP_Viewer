@@ -2,12 +2,17 @@
 #include <gst/gst.h>
 #include <gst/app/gstappsink.h>
 
-static GstElement* pipeline = NULL;
-static GstElement* appsink = NULL;
-static GstSample* current_sample = NULL;
-static GstMapInfo current_map;
+typedef struct
+{
+    GstElement* pipeline;
+    GstElement* appsink;
+    GstSample* sample;
+    GstMapInfo map;
+} MyGstContext;
 
 static char error_buffer[1024];
+
+static int gst_initialized = 0;
 
 //char* IP_ADDRESS = "192.168.1.45";
 //char* PORT = "8554";
@@ -17,7 +22,7 @@ static char error_buffer[1024];
 //static gchar* pipelinStr = "rtspsrc location=rtsp://127.0.0.1:8554/vlc latency=200 " "! decodebin " "! videoconvert ! video/x-raw,format=RGBA " "! appsink name=mysink sync=false max-buffers=1 drop=true";
 
 __declspec(dllexport)
-const char* InitPipelineWithSize(const char* rtspurl, int width, int height)
+MyGstContext* CreatePipeline(const char* rtspurl, int width, int height)
 {
     /*
     g_setenv(
@@ -33,7 +38,11 @@ const char* InitPipelineWithSize(const char* rtspurl, int width, int height)
     );
     */
 
-    gst_init(NULL, NULL);
+    if(!gst_initialized)
+    {
+        gst_init(NULL, NULL);
+        gst_initialized = 1;
+    }
 
     char pipelineStr[512];
 
@@ -44,90 +53,97 @@ const char* InitPipelineWithSize(const char* rtspurl, int width, int height)
         "! decodebin "
         "! videoconvert "
         "! videoscale "
-        "! videoflip method=vertical-flip "
-        "! video/x-raw,width=%d,height=%d,format=RGBA "
-        "! appsink name=mysink sync=false max-buffers=1 drop=true",
+        "! video/x-raw,width=%d,height=%d,format=BGRA " //크기 설정, BGRA 포맷
+        "! appsink name=mysink sync=false max-buffers=1 drop=true", //최신 프레임만 유지해서 지연 누적 방지
         rtspurl,
         width,
         height
     );
 
     GError* error = NULL;
+    MyGstContext* ctx = (MyGstContext*)calloc(1, sizeof(MyGstContext));
 
-    pipeline = gst_parse_launch(pipelineStr, &error);
+    ctx->pipeline = gst_parse_launch(pipelineStr, &error);
 
-    if (!pipeline)
+    if (!ctx->pipeline)
     {
-        if(error)
-        {
-            snprintf(error_buffer, sizeof(error_buffer), "pipeline error: %s", error->message);
-            g_error_free(error);
-            return error_buffer;
-        }
-        else
-        {
-            return "unknown pipeline error";
-        }
-        return "pipeline is NULL";
+        free(ctx);
+        return NULL;
     }
 
-    appsink = gst_bin_get_by_name(GST_BIN(pipeline), "mysink");
-    if (!appsink)
+    ctx->appsink = gst_bin_get_by_name(GST_BIN(ctx->pipeline), "mysink");
+    if (!ctx->appsink)
     {
-        return "appsink is NULL";
+        gst_object_unref(ctx->pipeline);
+        free(ctx);
+        return NULL;
     }
 
-    gst_element_set_state(pipeline, GST_STATE_PLAYING);
-    return "pipeline created";
+    gst_element_set_state(ctx->pipeline, GST_STATE_PLAYING);
+    return ctx;
 }
 
 __declspec(dllexport)
-unsigned char* GetFrame(int* width, int* height)
+unsigned char* GetFrame(MyGstContext* ctx, int* width, int* height)
 {
-    if (!appsink)
+    if (!ctx || !ctx->appsink)
         return NULL;
 
-    current_sample = gst_app_sink_try_pull_sample(
-        GST_APP_SINK(appsink), 0
+    ctx->sample = gst_app_sink_try_pull_sample(
+        GST_APP_SINK(ctx->appsink), GST_MSECOND * 5
     );
 
-    if (!current_sample)
+    if (!ctx->sample)
         return NULL;
 
-    GstCaps* caps = gst_sample_get_caps(current_sample);
+    GstBuffer* buffer = gst_sample_get_buffer(ctx->sample);
+
+    GstCaps* caps = gst_sample_get_caps(ctx->sample);
     GstStructure* s = gst_caps_get_structure(caps, 0);
 
     gst_structure_get_int(s, "width", width);
     gst_structure_get_int(s, "height", height);
 
-    GstBuffer* buffer = gst_sample_get_buffer(current_sample);
-
-    if (!gst_buffer_map(buffer, &current_map, GST_MAP_READ))
+    if (!gst_buffer_map(buffer, &ctx->map, GST_MAP_READ))
+    {
+        gst_sample_unref(ctx->sample);
+        ctx->sample = NULL;
         return NULL;
-
-    return current_map.data; // RGBA raw pointer
+    }
+    return ctx->map.data; // RGBA raw pointer
 }
 
 __declspec(dllexport)
-void ReleaseFrame(void)
+void ReleaseFrame(MyGstContext* ctx)
 {
-    if (!current_sample)
+    if (!ctx || !ctx->sample)
         return;
 
-    GstBuffer* buffer = gst_sample_get_buffer(current_sample);
-    gst_buffer_unmap(buffer, &current_map);
+    GstBuffer* buffer = gst_sample_get_buffer(ctx->sample);
+    gst_buffer_unmap(buffer, &ctx->map);
 
-    gst_sample_unref(current_sample);
-    current_sample = NULL;
+    gst_sample_unref(ctx->sample);
+    ctx->sample = NULL;
 }
 
 __declspec(dllexport)
-void StopPipeline(void)
+void DestroyPipeline(MyGstContext* ctx)
 {
-    if (!pipeline)
+    if (!ctx)
         return;
 
-    gst_element_set_state(pipeline, GST_STATE_NULL);
-    gst_object_unref(pipeline);
-    pipeline = NULL;
+    if (ctx->appsink)
+    {
+        gst_object_unref(ctx->appsink);
+        ctx->appsink = NULL;
+    }
+
+    if (ctx->pipeline)
+    {
+        gst_element_set_state(ctx->pipeline, GST_STATE_NULL);
+        gst_object_unref(ctx->pipeline);
+        ctx->pipeline = NULL;
+    }
+    
+    free(ctx);
 }

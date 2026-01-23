@@ -9,28 +9,33 @@ public class RTSP_Receiver : MonoBehaviour
 {
      // ===== Native DLL =====
     [DllImport("gst_native", CallingConvention = CallingConvention.Cdecl)]
-    private static extern IntPtr InitPipelineWithSize(string url, int width, int height);
+    private static extern IntPtr CreatePipeline(string url, int width, int height);
 
     [DllImport("gst_native", CallingConvention = CallingConvention.Cdecl)]
-    private static extern IntPtr GetFrame(ref int width, ref int height);
+    private static extern IntPtr GetFrame(IntPtr ctx, ref int width, ref int height);
 
     [DllImport("gst_native", CallingConvention = CallingConvention.Cdecl)]
-    private static extern void ReleaseFrame();
+    private static extern void ReleaseFrame(IntPtr ctx);
 
     [DllImport("gst_native", CallingConvention = CallingConvention.Cdecl)]
-    private static extern void StopPipeline();
+    private static extern void DestroyPipeline(IntPtr ctx);
+
+    IntPtr ctx;
 
     // ===== Unity =====
     public RawImage targetRawImage;
 
-    [Header("RTSP streaming url")]
+    [Header("RTSP streaming Settings")]
     public string rtsp_address;
     public string rtsp_port;
     public string rtsp_path;
     private string rtsp_url;
+    [SerializeField] private int targetFPS;
+    private float frameInterval;
+    private float renderTimer;
 
     private bool isReconnecting = false;
-    private float lastFrameTime = 0f;
+    private float reconnectTimer = 0f;
     private float timeout = 1f;
 
     private Texture2D videoTexture;
@@ -40,11 +45,24 @@ public class RTSP_Receiver : MonoBehaviour
     void Start()
     {
         StartPipeline();
+        Initialize();
     }
 
     void Update()
     {
-        UpdateTexture();
+        renderTimer += Time.deltaTime;
+        reconnectTimer += Time.deltaTime;
+
+        if(renderTimer >= frameInterval)
+        {
+            renderTimer = 0f;
+            UpdateTexture();
+        }
+
+        if(reconnectTimer >= timeout)
+        {
+            ReconnectRTSP();
+        }
     }
 
     public void StartPipeline()
@@ -65,66 +83,68 @@ public class RTSP_Receiver : MonoBehaviour
 
         Debug.Log($"[GStreamer] Target size = {width} x {height}");
 
-        // ===== 4. Native pipeline 초기화 =====
-        IntPtr msgPtr = InitPipelineWithSize(url, width, height);
-        string msg = Marshal.PtrToStringAnsi(msgPtr);
-
-        Debug.Log("[GStreamer] " + msg);
+        // ===== pipeline 초기화 =====
+        ctx = CreatePipeline(url, width, height);
     }
-    private void ReconnectRTSP()
+    public void ReconnectRTSP()
     {
-        ChangeRTSPAddress(rtsp_url);
+        if(isReconnecting)
+        {
+            return;
+        }
+        
+        isReconnecting = true;
+        StartCoroutine(ReconnectCoroutine());
     }
     public void ChangeRTSPAddress(string url)
     {
-        StopPipeline();
+        SafeDestroyPipeline();
         StartPipeline(url);
     }
 
     private void UpdateTexture()
     {
         int w = 0, h = 0;
-        IntPtr dataPtr = GetFrame(ref w, ref h);
+        IntPtr dataPtr = GetFrame(ctx, ref w, ref h);
 
-        if(dataPtr != IntPtr.Zero || w > 0 || h > 0)
+        if(dataPtr == IntPtr.Zero || w <= 0 || h <= 0)
         {
-            lastFrameTime = Time.time;
-
-            // Texture 생성 (최초 1회)
-            if (videoTexture == null)
-            {
-                texWidth = w;
-                texHeight = h;
-
-                videoTexture = new Texture2D(
-                    texWidth,
-                    texHeight,
-                    TextureFormat.RGBA32,
-                    false
-                );
-
-                videoTexture.wrapMode = TextureWrapMode.Clamp;
-                videoTexture.filterMode = FilterMode.Bilinear;
-
-                targetRawImage.texture = videoTexture;
-            }
-
-            // Native → Unity 복사
-            videoTexture.LoadRawTextureData(dataPtr, texWidth * texHeight * 4);
-            videoTexture.Apply(false);
-
-            ReleaseFrame();
-        }
-        else
-        {
-            if (Time.time - lastFrameTime > timeout)
-            {
-                Debug.Log($"[GStreamer] No frames for {timeout}s, restarting pipeline...");
-                ChangeRTSPAddress(rtsp_url);
-                lastFrameTime = Time.time;
-            }
+            return;
         }
 
+        reconnectTimer = 0f;
+
+        if (videoTexture == null)
+        {
+            texWidth = w;
+            texHeight = h;
+
+            videoTexture = new Texture2D(
+                texWidth,
+                texHeight,
+                TextureFormat.BGRA32,
+                false
+            );
+
+            videoTexture.wrapMode = TextureWrapMode.Clamp;
+            videoTexture.filterMode = FilterMode.Bilinear;
+
+            targetRawImage.texture = videoTexture;
+        }
+
+        videoTexture.LoadRawTextureData(dataPtr, texWidth * texHeight * 4);
+        videoTexture.Apply(false, false);
+
+        ReleaseFrame(ctx);
+    }
+
+    private void SafeDestroyPipeline()
+    {
+        if(ctx != IntPtr.Zero)
+        {
+            DestroyPipeline(ctx);
+            ctx = IntPtr.Zero;
+        }
     }
 
     private string CombineUrl()
@@ -132,19 +152,37 @@ public class RTSP_Receiver : MonoBehaviour
         return $"{rtsp_address}:{rtsp_port}/{rtsp_path.TrimStart('/')}";
     }
     
-    public IEnumerator ReconnectCoroutine()
+    private IEnumerator ReconnectCoroutine()
     {
-        isReconnecting = true;
-
-        StopPipeline();
+        SafeDestroyPipeline();
         yield return null;
-        ReconnectRTSP();
+        StartPipeline(rtsp_url);
+
+        reconnectTimer = 0f;
+        renderTimer = 0f;
 
         isReconnecting = false;
     }
 
+    private void Initialize()
+    {
+        SetImageFlip();
+        SetFPS();
+    }
+
+    private void SetImageFlip()
+    {
+        //flip image
+        RawImage img = targetRawImage;
+        img.uvRect = new Rect(0, 1, 1, -1);
+    }
+    private void SetFPS()
+    {
+        frameInterval = 1f / targetFPS;
+    }
+
     void OnDestroy()
     {
-        StopPipeline();
+        SafeDestroyPipeline();
     }
 }
