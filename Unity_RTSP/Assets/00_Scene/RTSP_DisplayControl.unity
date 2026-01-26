@@ -2178,6 +2178,8 @@ MonoBehaviour:
   - {fileID: 1105275738}
   - {fileID: 1931151878}
   pageManager: {fileID: 1769369676}
+  activeColor: {r: 1, g: 0.5, b: 0, a: 1}
+  inactiveColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!1 &381384976
 GameObject:
   m_ObjectHideFlags: 0
