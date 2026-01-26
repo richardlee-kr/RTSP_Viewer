@@ -11,7 +11,7 @@ public class PageManager : MonoBehaviour
     [SerializeField] private GameObject addDisplayPopup;
     [SerializeField] private PageButtonManager buttonManager;
 
-    private int currentPageNum = 0;
+    private int currentPageIndex = 0;
 
     void Start()
     {
@@ -61,7 +61,20 @@ public class PageManager : MonoBehaviour
             pages[i].gameObject.SetActive(false);
         }
         pages[index].gameObject.SetActive(true);
-        currentPageNum = index;
+        currentPageIndex = index;
+    }
+
+    public void NextPage()
+    {
+        if(currentPageIndex+1 < pages.Count)
+            ChangePage(currentPageIndex+1);
+        buttonManager.SetCurrentPageButtonColor(currentPageIndex);
+    }
+    public void PrevPage()
+    {
+        if(currentPageIndex > 0)
+            ChangePage(currentPageIndex-1);
+        buttonManager.SetCurrentPageButtonColor(currentPageIndex);
     }
 
     public void AddDisplay(GameObject newDisplay)
@@ -137,5 +150,5 @@ public class PageManager : MonoBehaviour
 
     public void OpenAddDisplayPopup() => addDisplayPopup.SetActive(true);
 
-    public DisplayPage GetCurrentPage() => pages[currentPageNum];
+    public DisplayPage GetCurrentPage() => pages[currentPageIndex];
 }

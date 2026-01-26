@@ -73,7 +73,7 @@ public class DisplayPage : MonoBehaviour
     {
         foreach(GameObject display in displaysInPage)
         {
-            display.transform.parent = null;
+            display.transform.SetParent(null);
         }
     }
     public int GetDisplayCount() => displaysInPage.Count;

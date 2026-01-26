@@ -30,7 +30,7 @@ public class PageButtonManager : MonoBehaviour
         SetCurrentPageButtonColor(index);
     }
 
-    private void SetCurrentPageButtonColor(int index)
+    public void SetCurrentPageButtonColor(int index)
     {
         for (int i = 0; i < pageButtons.Count; i++)
         {
