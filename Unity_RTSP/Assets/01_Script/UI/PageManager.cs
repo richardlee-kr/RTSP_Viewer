@@ -123,7 +123,7 @@ public class PageManager : MonoBehaviour
         if(pages[pages.Count-1].GetDisplayCount() == 6)
         {
             AddNewPage();
-            ChangePage(pages.Count-1);
+            ChangePage(currentPageIndex);
         }
         if (pages.Count == 0)
         {
