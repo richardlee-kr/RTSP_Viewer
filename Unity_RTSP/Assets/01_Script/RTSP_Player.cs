@@ -96,10 +96,11 @@ public class RTSP_Player : MonoBehaviour
         SafeDestroyPipeline();
         StartPipeline(url);
     }
-    public void Setup(RTSP_Setting newSetting, DisplayPage page)
+    public void Setup(RTSP_Setting newSetting, DisplayPage page = null)
     {
         this.setting = newSetting;
-        this.page = page;
+        if(page != null)
+            this.page = page;
         Initialize();
         StartPipeline();
     }
@@ -239,6 +240,7 @@ public class RTSP_Player : MonoBehaviour
     {
         SafeDestroyPipeline();
     }
+    public RTSP_Setting GetSetting() => setting;
 }
 
 [Serializable]
