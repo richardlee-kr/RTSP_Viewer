@@ -49,7 +49,7 @@ MyGstContext* CreatePipeline(const char* rtspurl, int width, int height)
     snprintf(
         pipelineStr,
         sizeof(pipelineStr),
-        "rtspsrc location=rtsp://%s latency=200 "
+        "rtspsrc location=rtsp://%s latency=0 "
         "! decodebin "
         "! videoconvert "
         "! videoscale "
