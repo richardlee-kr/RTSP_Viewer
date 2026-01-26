@@ -700,6 +700,7 @@ GameObject:
   - component: {fileID: 1119794085772697451}
   - component: {fileID: 8083496925324090949}
   - component: {fileID: 4991791130961593234}
+  - component: {fileID: 580193631445491283}
   m_Layer: 5
   m_Name: RTSP_Player
   m_TagString: Untagged
@@ -779,6 +780,7 @@ MonoBehaviour:
     port: 9550
     path: /live
     fps: 30
+  handler: {fileID: 580193631445491283}
 --- !u!114 &4991791130961593234
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -794,6 +796,19 @@ MonoBehaviour:
   stateImage: {fileID: 5575336303096504205}
   urlText: {fileID: 5653860541714936831}
   titleText: {fileID: 1035173085394978742}
+--- !u!114 &580193631445491283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8223586648436987454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: def447cd53dc3594fa355a9e6c4ded35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  doubleClickTime: 0.3
 --- !u!1 &8229158623304084299
 GameObject:
   m_ObjectHideFlags: 0
