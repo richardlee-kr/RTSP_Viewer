@@ -20,14 +20,7 @@ public class PageManager : MonoBehaviour
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            AddNewPage();
-        }
-        if(Input.GetKeyDown(KeyCode.R))
-        {
-            DeletePage(pages.Count-1);
-        }
+
     }
 
     private void AddFirstPage()
@@ -128,6 +121,18 @@ public class PageManager : MonoBehaviour
         {
             page.CheckAddDisplayVisible();
         }
+    }
+
+
+    public void SwapDisplays(GameObject displayA, GameObject displayB)
+    {
+        int indexA = allDisplays.IndexOf(displayA);
+        int indexB = allDisplays.IndexOf(displayB);
+
+        if (indexA < 0 || indexB < 0) return;
+
+        allDisplays[indexA] = displayB;
+        allDisplays[indexB] = displayA;
     }
 
     public void OpenAddDisplayPopup() => addDisplayPopup.SetActive(true);
