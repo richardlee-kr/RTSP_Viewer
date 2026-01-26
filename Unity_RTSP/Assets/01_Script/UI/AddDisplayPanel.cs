@@ -15,21 +15,13 @@ public class AddDisplayPanel : MonoBehaviour
     private RTSP_Setting CreateSetting()
     {
         RTSP_Setting _setting = new RTSP_Setting();
-        //TODO: 입력 형식 체크
-        if(false)
-        {
-            return null;
-        }
-        else
-        {
-            _setting.title = titleInput.text;
-            _setting.ip = ipInput.text;
-            _setting.port = portInput.text;
-            _setting.path = pathInput.text;
-            _setting.fps = int.Parse(fpsInput.text);
+        _setting.title = titleInput.text;
+        _setting.ip = ipInput.text;
+        _setting.port = portInput.text;
+        _setting.path = pathInput.text;
+        _setting.fps = int.Parse(fpsInput.text);
 
-            return _setting;
-        }
+        return _setting;
     }
 
     public void RequestAddingPlayer()
