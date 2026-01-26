@@ -10,7 +10,7 @@ public class DisplayDoubleclickHandler : MonoBehaviour, IPointerClickHandler
 
     private void Start()
     {
-        detailSettingPanel = Object.FindObjectOfType<DetailSettingPanel>(true);;
+        detailSettingPanel = (DetailSettingPanel)Object.FindFirstObjectByType(typeof(DetailSettingPanel), FindObjectsInactive.Include);
     }
 
     public void OnPointerClick(PointerEventData eventData)

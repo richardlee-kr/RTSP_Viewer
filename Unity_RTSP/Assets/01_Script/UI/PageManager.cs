@@ -8,8 +8,8 @@ public class PageManager : MonoBehaviour
 
     [SerializeField] private GameObject displayPagePrefab;
 
-    [SerializeField] private PageButtonManager buttonManager;
     [SerializeField] private GameObject addDisplayPopup;
+    [SerializeField] private PageButtonManager buttonManager;
 
     private int currentPageNum = 0;
 
