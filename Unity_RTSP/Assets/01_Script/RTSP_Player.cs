@@ -75,7 +75,7 @@ public class RTSP_Player : MonoBehaviour
         int width = Mathf.RoundToInt(size.x * scale);
         int height = Mathf.RoundToInt(size.y * scale);
 
-        Debug.Log($"{gameObject.name} tries to start RTSP pipeline.\n Target size = {width} x {height}");
+        //Debug.Log($"{gameObject.name} tries to start RTSP pipeline.\n Target size = {width} x {height}");
 
         //GStreamer pipeline 초기화
         ctx = CreatePipeline(url, width, height);
