@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class PageButtonManager : MonoBehaviour
 {
     [SerializeField] List<Button> pageButtons = new List<Button>();
-    [SerializeField] private PanelManager panelManager;
+    [SerializeField] private PageManager pageManager;
 
     private int pageCount = 0;
     public void AddButton()
@@ -22,6 +22,6 @@ public class PageButtonManager : MonoBehaviour
 
     private void RequestChangePage(int index)
     {
-        panelManager.ChangePage(index);
+        pageManager.ChangePage(index);
     }
 }

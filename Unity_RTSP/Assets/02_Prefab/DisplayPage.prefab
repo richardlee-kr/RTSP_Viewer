@@ -159,8 +159,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1eb50ba3642250740b5e064716fb5754, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 8229158623304084299, guid: 72ad57aab3e52484090d53210aeca2d5, type: 3}
+  displayPrefab: {fileID: 8229158623304084299, guid: 72ad57aab3e52484090d53210aeca2d5, type: 3}
   addDisplay: {fileID: 328330800705286714}
+  displaysInPage: []
 --- !u!1 &7858301126594318249
 GameObject:
   m_ObjectHideFlags: 0

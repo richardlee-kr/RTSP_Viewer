@@ -3,7 +3,7 @@ using TMPro;
 
 public class AddDisplayPanel : MonoBehaviour
 {
-    [SerializeField] private PanelManager panelManager;
+    [SerializeField] private PageManager pageManager;
 
     [SerializeField] private TMP_InputField titleInput;
     [SerializeField] private TMP_InputField ipInput;
@@ -42,7 +42,7 @@ public class AddDisplayPanel : MonoBehaviour
         }
         else
         {
-            panelManager.GetCurrentPlayerHolder().AddPlayer(_setting);
+            pageManager.GetCurrentPlayerHolder().AddDisplay(_setting);
             gameObject.SetActive(false);
         }
     }

@@ -26,7 +26,7 @@ public class RTSP_Player : MonoBehaviour
     private RawImage targetRawImage;
     IntPtr ctx;
 
-    private PageManager holder;
+    private DisplayPage page;
 
     [SerializeField] private RTSP_Setting setting;
     private string rtsp_url;
@@ -98,10 +98,10 @@ public class RTSP_Player : MonoBehaviour
         SafeDestroyPipeline();
         StartPipeline(url);
     }
-    public void Setup(RTSP_Setting newSetting, PageManager holder)
+    public void Setup(RTSP_Setting newSetting, DisplayPage page)
     {
         this.setting = newSetting;
-        this.holder = holder;
+        this.page = page;
         Initialize();
         StartPipeline();
     }
@@ -227,8 +227,7 @@ public class RTSP_Player : MonoBehaviour
 
     public void RemoveSelf()
     {
-        holder.RemovePlayer();
-        Destroy(this.transform.parent.gameObject);
+        page.RemoveDisplay(this.gameObject);
     }
 
     void OnDestroy()
