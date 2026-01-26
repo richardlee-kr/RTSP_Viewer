@@ -42,7 +42,7 @@ public class AddDisplayPanel : MonoBehaviour
         }
         else
         {
-            pageManager.GetCurrentPlayerHolder().AddDisplay(_setting);
+            pageManager.GetCurrentPage().AddDisplay(_setting);
             gameObject.SetActive(false);
         }
     }

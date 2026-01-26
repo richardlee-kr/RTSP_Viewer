@@ -132,5 +132,5 @@ public class PageManager : MonoBehaviour
 
     public void OpenAddDisplayPopup() => addDisplayPopup.SetActive(true);
 
-    public DisplayPage GetCurrentPlayerHolder() => pages[currentPageNum];
+    public DisplayPage GetCurrentPage() => pages[currentPageNum];
 }

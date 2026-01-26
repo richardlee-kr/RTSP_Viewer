@@ -62,7 +62,6 @@ public class RTSP_Player : MonoBehaviour
 
     public void StartPipeline()
     {
-        rtsp_url = CombineUrl();
         StartPipeline(rtsp_url);
     }
     public void StartPipeline(string url)
@@ -80,7 +79,6 @@ public class RTSP_Player : MonoBehaviour
 
         //GStreamer pipeline 초기화
         ctx = CreatePipeline(url, width, height);
-        controller.SetUrlText(rtsp_url);
     }
     public void ReconnectRTSP()
     {
@@ -175,6 +173,7 @@ public class RTSP_Player : MonoBehaviour
     private void Initialize()
     {
         SetRequireComponent();
+        SetUI();
         SetImage();
         SetFPS();
     }
@@ -182,6 +181,12 @@ public class RTSP_Player : MonoBehaviour
     private void SetRequireComponent()
     {
         controller = GetComponent<RTSP_StateController>();
+    }
+    private void SetUI()
+    {
+        rtsp_url = CombineUrl();
+        controller.SetUrlText(rtsp_url);
+        controller.SetTitleText(setting.title);
     }
     private void SetImage()
     {

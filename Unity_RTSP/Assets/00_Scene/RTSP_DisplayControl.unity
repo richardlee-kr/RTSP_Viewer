@@ -10650,6 +10650,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pages: []
+  allDisplays: []
   displayPagePrefab: {fileID: 2691533172452343963, guid: 4901f29d2a15ad947b18649af15822d3, type: 3}
   buttonManager: {fileID: 373503389}
   addDisplayPopup: {fileID: 224320961}
