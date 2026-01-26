@@ -10,7 +10,6 @@ public class PageManager : MonoBehaviour
 
     [SerializeField] private PageButtonManager buttonManager;
     [SerializeField] private GameObject addDisplayPopup;
-    [SerializeField] private DetailSettingPanel detailSettingPanel;
 
     private int currentPageNum = 0;
 
