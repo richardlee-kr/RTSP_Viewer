@@ -8,6 +8,8 @@
 
 A simple RTSP stream viewer built with Unity and GStreamer.
 
+[🇰🇷 한국어](README.ko.md) | [🇺🇸 English](README.md)
+
 # Features
 - Add and remove displays
 - Expand and edit displays
@@ -50,4 +52,5 @@ Up to 6 displays can be shown per page.
 RTSP_Viewer is provided under [The MIT License]
 
 [The MIT License]: https://github.com/richardlee-kr/RTSP_Viewer/blob/main/LICENSE.md
+
 
