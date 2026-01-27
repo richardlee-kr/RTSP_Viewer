@@ -14,30 +14,9 @@ static char error_buffer[1024];
 
 static int gst_initialized = 0;
 
-//char* IP_ADDRESS = "192.168.1.45";
-//char* PORT = "8554";
-//char* STREAMING_PATH = "vlc";
-
-//static gchar* pipelineStr = "videotestsrc ! videoconvert ! appsink name=mysink";
-//static gchar* pipelinStr = "rtspsrc location=rtsp://127.0.0.1:8554/vlc latency=200 " "! decodebin " "! videoconvert ! video/x-raw,format=RGBA " "! appsink name=mysink sync=false max-buffers=1 drop=true";
-
 __declspec(dllexport)
 MyGstContext* CreatePipeline(const char* rtspurl, int width, int height)
 {
-    /*
-    g_setenv(
-        "GST_PLUGIN_PATH",
-        "C:/Unity_git/RTSP/Unity_RTSP/Assets/Plugins/x86_64/gstreamer-1.0/lib/gstreamer-1.0",
-        TRUE
-    );
-    g_setenv(
-        "PATH",
-        "C:/Unity_git/RTSP/Unity_RTSP/Assets/Plugins/x86_64;"
-        "C:/Unity_git/RTSP/Unity_RTSP/Assets/Plugins/x86_64/gstreamer-1.0/bin",
-        TRUE
-    );
-    */
-
     if(!gst_initialized)
     {
         gst_init(NULL, NULL);
