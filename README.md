@@ -2,13 +2,13 @@
 [![Release](https://img.shields.io/github/v/release/richardlee-kr/RTSP_Viewer)](https://github.com/richardlee-kr/RTSP_Viewer/releases)
 [![License](https://img.shields.io/badge/license-MIT-green)](https://github.com/richardlee-kr/RTSP_Viewer/blob/master/LICENSE.md)
 
+[🇰🇷 한국어](README.ko.md) | [🇺🇸 English](README.md)
+
 <p align="center">
   <img width="960" height="540" alt="image" src="https://github.com/user-attachments/assets/a0662d7d-c58c-4796-b985-ded85d879690" />
 </p>
 
 A simple RTSP stream viewer built with Unity and GStreamer.
-
-[🇰🇷 한국어](README.ko.md) | [🇺🇸 English](README.md)
 
 # Features
 - Add and remove displays
@@ -52,5 +52,6 @@ Up to 6 displays can be shown per page.
 RTSP_Viewer is provided under [The MIT License]
 
 [The MIT License]: https://github.com/richardlee-kr/RTSP_Viewer/blob/main/LICENSE.md
+
 
 
