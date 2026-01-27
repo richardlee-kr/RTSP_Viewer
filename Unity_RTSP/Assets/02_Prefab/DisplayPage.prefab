@@ -161,7 +161,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayPrefab: {fileID: 8229158623304084299, guid: 72ad57aab3e52484090d53210aeca2d5, type: 3}
   addDisplay: {fileID: 328330800705286714}
-  displaysInPage: []
 --- !u!1 &7858301126594318249
 GameObject:
   m_ObjectHideFlags: 0
@@ -221,14 +220,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d5f1b30f74b71c943867e927dcade21c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d15bea5d8ca788c4eba019fedd0ab93d, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
