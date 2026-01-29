@@ -40,6 +40,8 @@ public class RTSP_Player : MonoBehaviour
     private float reconnectTimer = 0f;
     private float timeout = 1f;
 
+    private int reconnectCounter = 0;
+
     //Texture
     private Texture2D videoTexture;
     private int texWidth = 0;
@@ -80,22 +82,24 @@ public class RTSP_Player : MonoBehaviour
         //GStreamer pipeline 초기화
         ctx = CreatePipeline(url, width, height);
     }
-    public void ReconnectRTSP()
+
+    public void ManualReconnect() //by button
+    {
+        ReconnectRTSP();
+        reconnectCounter = 0;
+    }
+    private void ReconnectRTSP()
     {
         if(isReconnecting)
         {
             return;
         }
         
-        controller.UpdateState(RTSP_State.disconnected);
+        controller.UpdateState(RTSP_State.reconnecting);
         isReconnecting = true;
         StartCoroutine(ReconnectCoroutine());
     }
-    public void ChangeRTSPAddress(string url)
-    {
-        SafeDestroyPipeline();
-        StartPipeline(url);
-    }
+
     public void Setup(RTSP_Setting newSetting, DisplayPage page = null)
     {
         this.setting = newSetting;
@@ -116,6 +120,7 @@ public class RTSP_Player : MonoBehaviour
         }
 
         reconnectTimer = 0f;
+        reconnectCounter = 0;
 
         controller.UpdateState(RTSP_State.connected);
 
@@ -167,6 +172,8 @@ public class RTSP_Player : MonoBehaviour
 
         reconnectTimer = 0f;
         renderTimer = 0f;
+
+        reconnectCounter++;
 
         isReconnecting = false;
     }
@@ -225,9 +232,14 @@ public class RTSP_Player : MonoBehaviour
             UpdateTexture();
         }
 
-        if(reconnectTimer >= timeout)
+        if(reconnectTimer >= timeout && reconnectCounter < 20)
         {
             ReconnectRTSP();
+        }
+
+        if(reconnectCounter >= 20)
+        {
+            controller.UpdateState(RTSP_State.disconnected);
         }
     }
 

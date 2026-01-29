@@ -3,6 +3,7 @@ using TMPro;
 
 public class DetailSettingPanel : MonoBehaviour
 {
+    //TODO: 새로 연결하지 말고 원래 있는 Raw Texture 가져오기
     [SerializeField] private RTSP_Player fullscreenPlayer;
     private RTSP_Player targetPlayer;
 
