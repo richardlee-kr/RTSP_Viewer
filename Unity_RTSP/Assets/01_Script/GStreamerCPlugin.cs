@@ -8,16 +8,16 @@ public class GStreamerCPlugin : MonoBehaviour
 {
      // ===== Native DLL =====
     [DllImport("gst_native", CallingConvention = CallingConvention.Cdecl)]
-    private static extern IntPtr InitPipelineWithSize(string url, int width, int height);
+    private static extern IntPtr CreatePipeline(string url, int width, int height);
 
     [DllImport("gst_native", CallingConvention = CallingConvention.Cdecl)]
-    private static extern IntPtr GetFrame(ref int width, ref int height);
+    private static extern IntPtr GetFrame(IntPtr ctx, ref int width, ref int height);
 
     [DllImport("gst_native", CallingConvention = CallingConvention.Cdecl)]
-    private static extern void ReleaseFrame();
+    private static extern void ReleaseFrame(IntPtr ctx);
 
     [DllImport("gst_native", CallingConvention = CallingConvention.Cdecl)]
-    private static extern void StopPipeline();
+    private static extern void DestroyPipeline(IntPtr ctx);
 
     // ===== Unity =====
     public RawImage targetRawImage;
@@ -30,6 +30,8 @@ public class GStreamerCPlugin : MonoBehaviour
     private int texHeight = 0;
 
     static bool envInitialized = false;
+
+    IntPtr ctx;
 
     void Awake()
     {
@@ -88,16 +90,15 @@ public class GStreamerCPlugin : MonoBehaviour
         Debug.Log($"[GStreamer] Target size = {width} x {height}");
 
         // ===== 4. Native pipeline 초기화 =====
-        IntPtr msgPtr = InitPipelineWithSize(rtsp_url, width, height);
-        string msg = Marshal.PtrToStringAnsi(msgPtr);
-
-        Debug.Log("[GStreamer] " + msg);
+        ctx = CreatePipeline(rtsp_url, width, height);
+        RawImage img = targetRawImage;
+        img.uvRect = new Rect(0, 1, 1, -1);
     }
 
     void Update()
     {
         int w = 0, h = 0;
-        IntPtr dataPtr = GetFrame(ref w, ref h);
+        IntPtr dataPtr = GetFrame(ctx, ref w, ref h);
 
         if (dataPtr == IntPtr.Zero || w == 0 || h == 0)
             return;
@@ -111,7 +112,7 @@ public class GStreamerCPlugin : MonoBehaviour
             videoTexture = new Texture2D(
                 texWidth,
                 texHeight,
-                TextureFormat.RGBA32,
+                TextureFormat.BGRA32,
                 false
             );
 
@@ -125,11 +126,11 @@ public class GStreamerCPlugin : MonoBehaviour
         videoTexture.LoadRawTextureData(dataPtr, texWidth * texHeight * 4);
         videoTexture.Apply(false);
 
-        ReleaseFrame();
+        ReleaseFrame(ctx);
     }
 
     void OnDestroy()
     {
-        StopPipeline();
+        DestroyPipeline(ctx);
     }
 }
