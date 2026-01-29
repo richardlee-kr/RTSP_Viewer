@@ -44,6 +44,16 @@ Up to 6 displays can be shown per page.
 1. Drag the title of a display.
 2. Drop it onto the display you want to swap positions with.
 
+## Reconnecting
+<img width="566" height="186" alt="image" src="https://github.com/user-attachments/assets/f1ec2744-df26-4e1e-8ec1-6b9b0fb903d4" />
+
+When RTSP disconnected, display changes to loading screen with yellow state knob.
+After 20 reconnection attempt, display will be black screen.
+
+- Green: connected
+- Yellow: reconnecting
+- Gray: disconnected
+
 ## Etc
 - Press Esc to exit the program.
 - Popups can be closed by pressing Esc.
@@ -52,6 +62,7 @@ Up to 6 displays can be shown per page.
 RTSP_Viewer is provided under [The MIT License]
 
 [The MIT License]: https://github.com/richardlee-kr/RTSP_Viewer/blob/main/LICENSE.md
+
 
 
 
