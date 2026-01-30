@@ -242,6 +242,7 @@ MonoBehaviour:
   addDisplayPanel: {fileID: 96115062457006891}
   detailSettingPanel: {fileID: 212019506732664978}
   exitPanel: {fileID: 1037691526780712094}
+  pageManager: {fileID: 621842384}
 --- !u!1 &175723024
 GameObject:
   m_ObjectHideFlags: 0

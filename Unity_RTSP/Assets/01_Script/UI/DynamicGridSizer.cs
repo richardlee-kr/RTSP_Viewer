@@ -4,20 +4,33 @@ using System.Collections.Generic;
 
 public class DynamicGridSizer : MonoBehaviour
 {
-    private bool useFullscreen = false;   // 🔥 이걸로 ON/OFF
+    public bool useFullscreen = false;   // 🔥 이걸로 ON/OFF
     public int maxColumns = 3;
     public int maxRows = 2;
 
-    [SerializeField] private GameObject gridObject;
-
     private GridLayoutGroup grid;
     private RectTransform rect;
+
+    [SerializeField] private DisplayPage page;
+
+    [Header("Objects to toggle")]
+
+    [SerializeField] private GameObject btn_expand;
+    [SerializeField] private GameObject btn_shrink;
+
+    [SerializeField] private Image backgroundImage;
+    [SerializeField] private GameObject addDisplay;
 
     private Vector2 originalCellSize; // 원래 셀 크기 저장
 
     void Start()
     {
         Initialize();
+    }
+
+     void Update()
+    {
+        btn_expand.SetActive(page.GetDisplayCount() >0);
     }
 
     public void ApplySizing()
@@ -96,9 +109,24 @@ public class DynamicGridSizer : MonoBehaviour
         return new Vector2(width, height);
     }
 
-    public void ToggleFullscreen()
+    public void Expand()
     {
-        useFullscreen = !useFullscreen;
+        useFullscreen = true;
+        backgroundImage.enabled = true;
+        btn_shrink.SetActive(true);
+        addDisplay.SetActive(false);
+
+        ApplySizing();
+    }
+    public void Shrink()
+    {
+        useFullscreen = false;
+        backgroundImage.enabled = false;
+        btn_shrink.SetActive(false);
+        addDisplay.SetActive(true);
+
+        page.CheckAddDisplayVisible();
+        
         ApplySizing();
     }
 

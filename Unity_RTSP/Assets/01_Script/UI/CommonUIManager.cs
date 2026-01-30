@@ -6,9 +6,12 @@ public class CommonUIManager : MonoBehaviour
     [SerializeField] private GameObject addDisplayPanel;
     [SerializeField] private GameObject detailSettingPanel;
     [SerializeField] private GameObject exitPanel;
+    [SerializeField] private PageManager pageManager;
+    private DynamicGridSizer fullscreenPage;
 
     void Update()
     {
+        fullscreenPage = pageManager.GetCurrentPage().holder.GetComponent<DynamicGridSizer>();
         if(Input.GetKeyDown(KeyCode.Escape))
         {
             if(addDisplayPanel.activeSelf)
@@ -22,6 +25,10 @@ public class CommonUIManager : MonoBehaviour
             else if(exitPanel.activeSelf)
             {
                 exitPanel.SetActive(false);
+            }
+            else if(fullscreenPage.useFullscreen)
+            {
+                fullscreenPage.Shrink();
             }
             else
             {
