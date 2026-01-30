@@ -29,11 +29,11 @@ MyGstContext* CreatePipeline(const char* rtspurl, int width, int height)
         pipelineStr,
         sizeof(pipelineStr),
         "rtspsrc location=rtsp://%s latency=0 "
-        "! decodebin "
+        "! rtph264depay ! decodebin "
         "! videoconvert "
-        "! videoscale "
-        "! video/x-raw,width=%d,height=%d,format=BGRA " //크기 설정, BGRA 포맷
-        "! appsink name=mysink sync=false max-buffers=1 drop=true", //최신 프레임만 유지해서 지연 누적 방지
+        "! videoscale add-borders=true "
+        "! video/x-raw,width=%d,height=%d,format=BGRA,pixel-aspect-ratio=1/1 "
+        "! appsink name=mysink sync=false max-buffers=1 drop=true",
         rtspurl,
         width,
         height
