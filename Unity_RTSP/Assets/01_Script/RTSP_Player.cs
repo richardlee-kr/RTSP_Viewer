@@ -29,7 +29,7 @@ public class RTSP_Player : MonoBehaviour
     private DisplayPage page;
 
     [SerializeField] private RTSP_Setting setting;
-    private string rtsp_url;
+    [HideInInspector] public string rtsp_url;
 
     //FPS timer
     private float frameInterval;

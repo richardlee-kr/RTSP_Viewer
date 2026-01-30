@@ -5012,7 +5012,7 @@ GameObject:
   - component: {fileID: 105527252564256804}
   - component: {fileID: 8661705411804773226}
   m_Layer: 5
-  m_Name: RTSP_Display_Fullscreen
+  m_Name: RTSP_Display_Expand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -18,6 +18,8 @@ public class DuplicatedPlayer : MonoBehaviour
     {
         this.originalPlayer = target;
         Initialize();
+        controller.SetTitleText(target.GetSetting().title);
+        controller.SetUrlText(target.rtsp_url);
     }
 
     private void Update()
