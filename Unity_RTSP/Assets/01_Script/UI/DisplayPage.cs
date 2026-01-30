@@ -24,7 +24,7 @@ public class DisplayPage : MonoBehaviour
     {
         GameObject newDisplay = Instantiate(displayPrefab, holder.transform);
         newDisplay.name = $"{setting.title}";
-        newDisplay.transform.GetChild(0).GetComponent<RTSP_Player>().Setup(setting, this);
+        newDisplay.transform.GetComponentInChildren<RTSP_Player>().Setup(setting, this);
         displaysInPage.Add(newDisplay);
         pageManager.AddDisplay(newDisplay);
 
@@ -41,15 +41,20 @@ public class DisplayPage : MonoBehaviour
     
     public void RemoveDisplay(GameObject player)
     {
-        displaysInPage.Remove(player.transform.parent.gameObject);
-        pageManager.RemoveDisplay(player.transform.parent.gameObject);
-        Destroy(player.transform.parent.gameObject);
+        displaysInPage.Remove(player.transform.parent.parent.gameObject);
+        pageManager.RemoveDisplay(player.transform.parent.parent.gameObject);
+        Destroy(player.transform.parent.parent.gameObject);
 
         pageManager.ReorderDisplays();
     }
 
     public void CheckAddDisplayVisible()
     {
+        if(holder.GetComponent<DynamicGridSizer>().useFullscreen)
+        {
+            holder.GetComponent<DynamicGridSizer>().ApplySizing();
+            return;
+        }
         if(displaysInPage.Count < 6)
         {
             addDisplay.SetActive(true);

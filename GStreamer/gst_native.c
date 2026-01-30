@@ -31,12 +31,10 @@ MyGstContext* CreatePipeline(const char* rtspurl, int width, int height)
         "rtspsrc location=rtsp://%s latency=0 "
         "! rtph264depay ! decodebin "
         "! videoconvert "
-        "! videoscale add-borders=true "
-        "! video/x-raw,width=%d,height=%d,format=BGRA,pixel-aspect-ratio=1/1 "
+        "! videoscale "
+        "! video/x-raw,format=BGRA,pixel-aspect-ratio=1/1 "
         "! appsink name=mysink sync=false max-buffers=1 drop=true",
-        rtspurl,
-        width,
-        height
+        rtspurl
     );
 
     GError* error = NULL;

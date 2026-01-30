@@ -21,7 +21,6 @@ public class RTSP_Player : MonoBehaviour
     [DllImport("gst_native", CallingConvention = CallingConvention.Cdecl)]
     private static extern void DestroyPipeline(IntPtr ctx);
 
-
     // ===== Unity =====
     private RawImage targetRawImage;
     IntPtr ctx;
@@ -46,6 +45,8 @@ public class RTSP_Player : MonoBehaviour
     private Texture2D videoTexture;
     private int texWidth = 0;
     private int texHeight = 0;
+    private int width = 1920;
+    private int height = 1080;
 
     //Component
     [HideInInspector] public RTSP_StateController controller;
@@ -73,15 +74,6 @@ public class RTSP_Player : MonoBehaviour
     }
     public void StartPipeline(string url)
     {
-        //RawImage 실제 픽셀 계산
-        RectTransform rt = targetRawImage.rectTransform;
-
-        Vector2 size = rt.rect.size;
-        float scale = rt.lossyScale.x;
-
-        int width = Mathf.RoundToInt(size.x * scale);
-        int height = Mathf.RoundToInt(size.y * scale);
-
         //Debug.Log($"{gameObject.name} tries to start RTSP pipeline.\n Target size = {width} x {height}");
 
         //GStreamer pipeline 초기화
