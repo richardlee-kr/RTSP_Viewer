@@ -56,6 +56,7 @@ public class RTSP_StateController : MonoBehaviour
         }
     }
 
+    public RTSP_State GetCurrentState() => currentState;
 }
 
 public enum RTSP_State

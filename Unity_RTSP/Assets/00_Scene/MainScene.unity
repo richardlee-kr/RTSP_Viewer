@@ -2627,7 +2627,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.5019608}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -9934,7 +9934,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a878713cf7d3514cbd2d5178ee59a9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fullscreenPlayer: {fileID: 8560000192029349418}
+  fullscreenPlayer: {fileID: 8329253013722262368}
   titleInput: {fileID: 7298900483066707274}
   ipInput: {fileID: 1980118625675741446}
   portInput: {fileID: 5405833179006616295}
@@ -9952,13 +9952,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bc852a0d64775e419e6146b9b61cb84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  focusOnStart: 0
   inputFields:
   - {fileID: 7298900483066707274}
   - {fileID: 1980118625675741446}
   - {fileID: 5405833179006616295}
   - {fileID: 5966969615908460162}
   - {fileID: 6366216184745101406}
-  focusOnStart: 0
 --- !u!1 &5681314618492420263
 GameObject:
   m_ObjectHideFlags: 0
@@ -10738,9 +10738,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8560000192029349418}
-        m_TargetAssemblyTypeName: RTSP_Player, Assembly-CSharp
-        m_MethodName: ReconnectRTSP
+      - m_Target: {fileID: 8329253013722262368}
+        m_TargetAssemblyTypeName: DuplicatedPlayer, Assembly-CSharp
+        m_MethodName: ManualReconnect
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -10792,13 +10792,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bc852a0d64775e419e6146b9b61cb84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  focusOnStart: 1
   inputFields:
   - {fileID: 8559444931007376600}
   - {fileID: 7358657435624828065}
   - {fileID: 4770632633947757057}
   - {fileID: 6936330630706410302}
   - {fileID: 8262423663195864980}
-  focusOnStart: 1
 --- !u!222 &6619912384053711767
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -12763,23 +12763,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &7888603210621259455
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8329253013722262367}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 000276c2fbf607d45986c4ee04b96bb7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  stateImage: {fileID: 5884737396898499719}
-  urlText: {fileID: 5420285467254804502}
-  titleText: {fileID: 6767944784746678353}
-  loadingScreenImage: {fileID: 1566063537}
-  whiteScreenImage: {fileID: 1056322666}
 --- !u!224 &7893275309887113825
 RectTransform:
   m_ObjectHideFlags: 0
@@ -13490,8 +13473,8 @@ GameObject:
   - component: {fileID: 7309926329792853014}
   - component: {fileID: 5436027720157190838}
   - component: {fileID: 1882295495823543723}
-  - component: {fileID: 8560000192029349418}
-  - component: {fileID: 7888603210621259455}
+  - component: {fileID: 8329253013722262369}
+  - component: {fileID: 8329253013722262368}
   m_Layer: 5
   m_Name: RTSP_Player
   m_TagString: Untagged
@@ -13499,6 +13482,35 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &8329253013722262368
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8329253013722262367}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e5b4fc980a634d40830dadf20ec41db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8329253013722262369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8329253013722262367}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 000276c2fbf607d45986c4ee04b96bb7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stateImage: {fileID: 5884737396898499719}
+  urlText: {fileID: 5420285467254804502}
+  titleText: {fileID: 6767944784746678353}
+  loadingScreenImage: {fileID: 1566063537}
+  whiteScreenImage: {fileID: 1056322666}
 --- !u!222 &8333465297829499335
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -13803,24 +13815,6 @@ MonoBehaviour:
   isAlert: 0
   m_InputValidator: {fileID: 0}
   m_ShouldActivateOnSelect: 1
---- !u!114 &8560000192029349418
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8329253013722262367}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29e623b39925216428a81e49ef2860a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  setting:
-    title: 
-    ip: 
-    port: 
-    path: 
-    fps: 0
 --- !u!224 &8566827194676826560
 RectTransform:
   m_ObjectHideFlags: 0

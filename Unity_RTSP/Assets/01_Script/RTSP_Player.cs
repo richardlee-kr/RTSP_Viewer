@@ -48,7 +48,7 @@ public class RTSP_Player : MonoBehaviour
     private int texHeight = 0;
 
     //Component
-    private RTSP_StateController controller;
+    [HideInInspector] public RTSP_StateController controller;
 
     void Start()
     {
@@ -60,6 +60,11 @@ public class RTSP_Player : MonoBehaviour
     {
         UpdateTimer();
         CheckTimer();
+    }
+
+    public Texture2D GetTexture()
+    {
+        return videoTexture;
     }
 
     public void StartPipeline()

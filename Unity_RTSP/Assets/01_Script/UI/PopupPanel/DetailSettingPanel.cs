@@ -3,7 +3,7 @@ using TMPro;
 
 public class DetailSettingPanel : MonoBehaviour
 {
-    [SerializeField] private RTSP_Player fullscreenPlayer;
+    [SerializeField] private DuplicatedPlayer fullscreenPlayer;
     private RTSP_Player targetPlayer;
 
     private RTSP_Setting setting;
@@ -43,7 +43,8 @@ public class DetailSettingPanel : MonoBehaviour
     }
     private void SetDisplay()
     {
-        fullscreenPlayer.Setup(setting, null);
+        //fullscreenPlayer.Setup(setting, null);
+        fullscreenPlayer.Setup(targetPlayer);
     }
 
     public void Apply()
@@ -55,7 +56,8 @@ public class DetailSettingPanel : MonoBehaviour
         setting.fps = int.Parse(fpsInput.text);
 
         targetPlayer.Setup(setting);
-        fullscreenPlayer.Setup(setting, null);
+        fullscreenPlayer.Setup(targetPlayer);
+        //fullscreenPlayer.Setup(setting, null);
     }
     public void OK()
     {
