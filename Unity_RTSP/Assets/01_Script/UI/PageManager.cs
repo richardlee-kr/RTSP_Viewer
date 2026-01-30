@@ -109,7 +109,7 @@ public class PageManager : MonoBehaviour
             DisplayPage _page = pages[_pageIndex];
 
             _page.AddDisplay(_display);
-            _display.transform.SetParent(_page.transform, false);
+            _display.transform.SetParent(_page.holder.transform, false);
         }
 
         for (int i = pages.Count - 1; i >= 0; i--)

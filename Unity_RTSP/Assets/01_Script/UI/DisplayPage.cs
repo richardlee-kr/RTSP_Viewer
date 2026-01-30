@@ -5,6 +5,7 @@ public class DisplayPage : MonoBehaviour
 {
     [SerializeField] private GameObject displayPrefab;
     [SerializeField] private GameObject addDisplay;
+    public GameObject holder;
 
     private List<GameObject> displaysInPage = new List<GameObject>();
     private PageManager pageManager;
@@ -21,7 +22,7 @@ public class DisplayPage : MonoBehaviour
 
     public void AddDisplay(RTSP_Setting setting)
     {
-        GameObject newDisplay = Instantiate(displayPrefab, transform);
+        GameObject newDisplay = Instantiate(displayPrefab, holder.transform);
         newDisplay.name = $"{setting.title}";
         newDisplay.transform.GetChild(0).GetComponent<RTSP_Player>().Setup(setting, this);
         displaysInPage.Add(newDisplay);
