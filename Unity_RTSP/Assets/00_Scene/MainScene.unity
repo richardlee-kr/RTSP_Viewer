@@ -4649,6 +4649,7 @@ GameObject:
   - component: {fileID: 6608027304809406519}
   - component: {fileID: 4689474013898504783}
   - component: {fileID: 480830210876906086}
+  - component: {fileID: 6608027304809406520}
   m_Layer: 5
   m_Name: Popup_AddDisplayPanel
   m_TagString: Untagged
@@ -4734,6 +4735,7 @@ GameObject:
   - component: {fileID: 922334472991813311}
   - component: {fileID: 3739552312047718585}
   - component: {fileID: 5677726157596021014}
+  - component: {fileID: 5677726157596021015}
   m_Layer: 5
   m_Name: DetailSettingPanel
   m_TagString: Untagged
@@ -9938,6 +9940,25 @@ MonoBehaviour:
   portInput: {fileID: 5405833179006616295}
   pathInput: {fileID: 5966969615908460162}
   fpsInput: {fileID: 6366216184745101406}
+--- !u!114 &5677726157596021015
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 212019506732664978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bc852a0d64775e419e6146b9b61cb84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputFields:
+  - {fileID: 7298900483066707274}
+  - {fileID: 1980118625675741446}
+  - {fileID: 5405833179006616295}
+  - {fileID: 5966969615908460162}
+  - {fileID: 6366216184745101406}
+  focusOnStart: 0
 --- !u!1 &5681314618492420263
 GameObject:
   m_ObjectHideFlags: 0
@@ -10759,6 +10780,25 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 96115062457006891}
   m_CullTransparentMesh: 1
+--- !u!114 &6608027304809406520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 96115062457006891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bc852a0d64775e419e6146b9b61cb84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputFields:
+  - {fileID: 8559444931007376600}
+  - {fileID: 7358657435624828065}
+  - {fileID: 4770632633947757057}
+  - {fileID: 6936330630706410302}
+  - {fileID: 8262423663195864980}
+  focusOnStart: 1
 --- !u!222 &6619912384053711767
 CanvasRenderer:
   m_ObjectHideFlags: 0
