@@ -30,7 +30,7 @@ public class DynamicGridSizer : MonoBehaviour
 
      void Update()
     {
-        btn_expand.SetActive(page.GetDisplayCount() >0);
+        btn_expand.SetActive(page.GetDisplayCount() > 0 && !useFullscreen);
     }
 
     public void ApplySizing()
